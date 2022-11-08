@@ -23,4 +23,18 @@ const findEmail = (email) => {
 }))
 }
 
-module.exports = {create,findEmail}
+const insertData = (data) =>{
+    const {id, email, fullname, password, role} = data
+    return pool.query(`INSERT INTO users(id, name, email, password, phone)VALUES('${id}', '${name}', '${email}', '${fullname}', '${password}', '${role}' )`)
+}
+
+const updateData = (id, data) =>{
+    const {name, email, fullname, password, role} = data
+    return pool.query(`UPDATE users SET name='${name}', email='${email}', '${fullname}', password='${password}', '${role}' WHERE id=${id}`)
+}
+
+const deleteData = (id) =>{
+    return pool.query(`DELETE FROM users WHERE id='${id}'`)
+}
+
+module.exports = {create,findEmail,insertData,updateData,deleteData}

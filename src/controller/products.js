@@ -5,19 +5,12 @@ const client = require("../config/redis");
 const ProductsController = {
 
   getProduct:(req,res,next) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page-1)*limit;
-    const sort = req.query.sortBy || 'id';
-    const sortBy = req.query.sort || 'asc';
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 5;
+    const sort = req.query.sort|| 'ASC';
+    const sortBy = req.query.sortBy || 'id';
     const search = req.query.search || '';
-    ModelProducts.selectDatas(sortBy, sort, limit, offset, search)
-    .then((result)=> response(res, 200, true, result.rows, "get data success"))
-    .catch((err)=> response(res, 404, false, err, "get data fail"))
-  },
-
-  getProducts:(req,res,next) => {
-    ModelProducts.selectData()
+    ModelProducts.selectData(sortBy, sort, limit, page, search)
     .then((result)=> response(res, 200, true, result.rows, "get data success"))
     .catch((err)=> response(res, 404, false, err, "get data fail"))
   },
@@ -49,6 +42,17 @@ const ProductsController = {
   },
 
   update:(req,res,next) => {
+    const Port = process.env.PORT;
+    const Host = process.env.HOST;
+    const photo = req.file.filename;
+    // console.log(req.file.filename)
+    const uri = `http://${Host}:${Port}/img/${photo}`
+    req.body.photo = uri
+    // console.log(uri)
+    // req.body.id = parseInt(req.body.id)
+    req.body.price = parseInt(req.body.price)
+    req.body.stock = parseInt(req.body.stock)
+    req.body.category_id = parseInt(req.body.category_id)
     ModelProducts.updateData(req.params.id,req.body)
     .then((result)=> response(res, 200, true, result.rows, "update data success"))
     .catch((err)=> response(res, 404, false, err, "update data fail"))

@@ -2,7 +2,7 @@ const {response} = require('../middleware/common');
 const {create, findEmail} = require('../model/users');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } =  require('uuid');
-const {generateToken} = require('../helper/auth');
+const {generateToken, genRefreshToken} = require('../helper/auth');
 
 const UsersController = {
     insert: async  (req, res, next) => {
@@ -34,6 +34,7 @@ const UsersController = {
             response(res, 404, false, err," register fail")
         }
     },
+
     login: async (req,res,next)=>{
         console.log('email',req.body.email)
         console.log('password',req.body.password)
@@ -52,8 +53,11 @@ const UsersController = {
             role: users.role
         }
         users.token = generateToken(payload)
+        users.refreshToken = genRefreshToken(payload)
         response(res, 200, false, users,"login success")
     },
 }
+
+
 
 exports.UsersController = UsersController;

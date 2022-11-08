@@ -10,4 +10,12 @@ const generateToken = (payload) =>{
     return token
 }
 
-module.exports = {generateToken}
+const genRefreshToken = (payload) =>{
+    const verifyOpts = {
+        expiresIn: '10h'
+    }
+    const token = jwt.sign(payload, key, verifyOpts)
+    return token
+}
+
+module.exports = {generateToken, genRefreshToken}
