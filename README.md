@@ -1,5 +1,5 @@
-# Lily Shop
-Lily Shop adalah aplikasi berbasis web untuk memudahkan transaksi antara penjual dan pembeli. API yang dibuat untuk proses transaksi antara custommer dan penjual ataupun seller. Penjual dapat menjual berbagai macam product yang dapat digolongkan sesuai kategorinya.
+# Blanja Shop
+   Blanja Shop adalah aplikasi berbasis web untuk memudahkan transaksi antara penjual dan pembeli. API yang dibuat untuk proses transaksi antara custommer dan penjual ataupun seller. Penjual dapat menjual berbagai macam product yang dapat digolongkan sesuai kategorinya.
 Teknologi yang digunakan yaitu Node JS, Express JS dan PosgreSL.
 
 [![made-with-javascript](https://img.shields.io/badge/Made%20with-JavaScript-1f425f.svg)](https://www.javascript.com)

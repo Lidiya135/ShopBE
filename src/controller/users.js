@@ -1,14 +1,16 @@
 const {response} = require('../middleware/common');
-const {create, findEmail} = require('../model/users');
+const {create, findEmail, insertUser, updateUser, findUser, updatePhoto, deleteUser, getUserById} = require('../model/users');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } =  require('uuid');
 const {generateToken, genRefreshToken} = require('../helper/auth');
+const modelUsers = require("../model/users");
+const cloudinary = require('../config/cloudinary')
 
-const UsersController = {
+const usersController = {
     insert: async  (req, res, next) => {
         let {rows:[users]} = await findEmail(req.body.email)
-        console.log('role',req.params.role)
-        let role = req.params.role
+        // console.log('role',req.params.role)
+        // let role = req.params.role
 
         if(users){
             return response(res, 404, false, "email already use"," register fail") 
@@ -21,7 +23,7 @@ const UsersController = {
             email : req.body.email,
             password ,
             fullname : req.body.fullname,
-            role 
+            role : req.params.role,
         }
         try{
             const result = await create(data)
@@ -36,8 +38,8 @@ const UsersController = {
     },
 
     login: async (req,res,next)=>{
-        console.log('email',req.body.email)
-        console.log('password',req.body.password)
+        // console.log('email',req.body.email)
+        // console.log('password',req.body.password)
         let {rows:[users]} = await findEmail(req.body.email)
         if(!users){
             return response(res, 404, false, null," email not found")
@@ -49,6 +51,7 @@ const UsersController = {
         }
         delete users.password
         let payload = {
+            id: users.id,
             email: users.email,
             role: users.role
         }
@@ -56,8 +59,41 @@ const UsersController = {
         users.refreshToken = genRefreshToken(payload)
         response(res, 200, false, users,"login success")
     },
+
+    getUser: async (req, res, next) => {
+        try {
+          const id = req.payload.id;
+          console.log(id);
+          const result = await modelUsers.getUserById(id);
+          response(res, 200, true, result.rows, "Success Get User By Id");
+        } catch (error) {
+          response(res, 400, false, error, "Get User By Id Fail");
+        }
+      },
+
+      update: async (req, res, next) => {
+        try {
+            const id = req.params.id;
+            console.log(req.file,"reqfile")
+              if (req.file) {
+                const image = await cloudinary.uploader.upload(req.file.path, {
+                  folder: 'products_blanja',
+                });
+        
+                req.body.photo = image.url;
+              } else {
+                req.body.photo = users.photo;
+              }
+        
+            const updateDataUser = await updateUser(id, req.body)
+            console.log(req.body)
+            response(res, 200, true, updateDataUser.rows, 'update users success')
+        } catch (err) {
+            response(res, 404, false, err.message, 'update users fail ')
+        }
+    },
 }
 
 
 
-exports.UsersController = UsersController;
+exports.usersController = usersController;

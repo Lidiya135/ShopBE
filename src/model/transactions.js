@@ -1,22 +1,39 @@
-const Pool = require('./../config/db');
+const Pool = require("../config/db");
 
-const selectData = () =>{
-    return Pool.query(`SELECT transactions.id, transactions.email, products.name as products_name, transactions.amount, transactions.total FROM transactions JOIN products ON transactions.products_id = products.id`)
+const selectByUser = (users_id) =>
+  Pool.query(
+    `SELECT transaction.id,transaction.products_id,transaction.amount,transaction.total,transaction.users_id,transaction.seller_id,products.name,products.photo,products.price FROM transaction INNER JOIN products ON transaction.products_id=products.id
+     WHERE transaction.users_id='${users_id}'`
+  );
+
+const selectById = (id) =>
+  new Promise((resolve, reject) => {
+    Pool.query(
+      `select * from transaction where id = '${id}' `,
+      (err, res) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(res);
+      }
+    );
+  });
+
+const insert = (users_id, data) => {
+  const { products_id, amount, total, seller_id } = data;
+  return Pool.query(
+    `INSERT INTO transaction(users_id,products_id,amount,total,seller_id)VALUES('${users_id}',${products_id},${amount},${total},'${seller_id}')`
+  );
 };
 
-const insertData = (data) => {
-    const {id, email, products_id, amount, total} = data;
-    return Pool.query(`INSERT INTO transactions(id,email,products_id,amount,total) VALUES(${id},'${email}',${products_id},${amount},${total})`);
+const deleteTrans = (id) =>
+  Pool.query(
+    `DELETE FROM transaction where id='${id}'`
+  );
+
+module.exports = {
+  selectByUser,
+  selectById,
+  insert,
+  deleteTrans
 };
-
-const deleteData = id => {
-    return Pool.query(`DELETE FROM transactions WHERE id='${id}'`);
-};
-
-const updateData = (id, data) =>  {
-    const {email, amount, total} = data;
-    return Pool.query(`UPDATE transactions SET email='${email}',amount='${amount}',total='${total}' WHERE id='${id}'`);
-};
-
-
-module.exports = {selectData, insertData, deleteData, updateData};

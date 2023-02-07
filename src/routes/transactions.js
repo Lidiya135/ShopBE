@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const {transactionsController} = require('./../controller/transactions');
+const { transactionController } = require("../controller/transactions");
+const { protect } = require("../middleware/auth");
 
-router.get('/',transactionsController.getTransactions);
-router.post('/',transactionsController.insert);
-router.put('/:id',transactionsController.update);
-router.delete('/:id',transactionsController.delete);
+router.get("/", protect, transactionController.getTransByUser);
+router.get("/:id", protect, transactionController.getTransDetail);
+router.post("/", protect, transactionController.insertTrans);
 
 module.exports = router;

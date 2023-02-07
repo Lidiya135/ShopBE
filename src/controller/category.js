@@ -10,6 +10,7 @@ const categoryController = {
   },
 
   insert:(req,res, next) => {
+    console.log(req.body.name)
     modelCategory.insertData(req.body)
     .then((result)=> response(res, 200, true, result.rows, "input data success"))
     .catch((err)=> response(res, 404, false, err, "input data fail"))
@@ -25,6 +26,12 @@ const categoryController = {
     modelCategory.deleteData(req.params.id)
     .then((result)=> response(res, 200, true, result.rows, "delete data success"))
     .catch((err)=> response(res, 404, false, err, "delete data fail"))
+  },
+
+  getCategoryById:(req,res,next) => {
+    modelCategory.selectDataById(req.params.id)
+    .then((result)=> response(res, 200, true, result.rows, "get data success"))
+    .catch((err)=> response(res, 404, false, err, "get data fail"))
   },
 };
 

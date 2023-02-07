@@ -7,23 +7,19 @@ const xss = require('xss-clean');
 require('dotenv').config();
 const mainRouter = require('./src/routes/index');
 const { response } = require('./src/middleware/common');
-
 const app = express();
-
-const products = require('./src/routes/products');
-const category = require('./src/routes/category');
-const transactions = require('./src/routes/transactions');
 
 app.use(morgan('dev'));
 app.use(cors());
-app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({policy:'cross-origin'}));
 app.use(xss());
-app.use(bodyParser.json());
+// app.use(bodyParser());
+// app.use(bodyParser({limit: '50mb'}));
+// app.use(bodyParser.urlencoded({limit: '50mb'}));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+// app.use(express.json({limit: '50mb'}));
 const port = process.env.PORT;
-
-app.use('/products', products);
-app.use('/category', category);
-app.use('/transactions', transactions);
 
 app.use('/', mainRouter);
 app.use('/img', express.static('./upload'));
