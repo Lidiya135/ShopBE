@@ -9,9 +9,20 @@ const mainRouter = require('./src/routes/index');
 const { response } = require('./src/middleware/common');
 const app = express();
 
+const corsOptions = {
+  origin: " shop-fe-tau.vercel.app ",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
 app.use(morgan('dev'));
-app.use(cors());
-app.use(helmet.crossOriginResourcePolicy({policy:'cross-origin'}));
+app.use(cors(corsOptions));
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: false,
+  })
+);
+// app.use(helmet.crossOriginResourcePolicy({policy:'cross-origin'}));
 app.use(xss());
 // app.use(bodyParser());
 // app.use(bodyParser({limit: '50mb'}));
